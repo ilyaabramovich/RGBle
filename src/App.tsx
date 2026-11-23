@@ -15,6 +15,11 @@ function App() {
       <main className="flex w-full max-w-md flex-1">
         <Puzzle key={game.id} initialColor={game.initialColor} targetColor={game.targetColor} />
       </main>
+      <footer>
+        <small>
+          Made by <a href="https://github.com/ilyaabramovich">@ilyabramovich</a>
+        </small>
+      </footer>
     </div>
   );
 }
