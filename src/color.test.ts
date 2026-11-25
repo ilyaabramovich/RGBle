@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { BLACK, CHANNELS, Color, WHITE } from "./color";
+import { createRandomInt } from "./random";
 
 const randomColor = () => new Color(Math.floor(Math.random() * 0x1000000));
 
@@ -53,19 +54,23 @@ describe("Color.random", () => {
 
   it("gives one seed the same color every time", () => {
     for (const seed of [0, 20670, 25000]) {
-      expect(Color.random(seed).value).toBe(Color.random(seed).value);
+      expect(Color.random(createRandomInt(seed)).value).toBe(
+        Color.random(createRandomInt(seed)).value,
+      );
     }
   });
 
   it("gives different seeds different colors", () => {
-    const colors = new Set(Array.from({ length: 200 }, (_, seed) => Color.random(seed).value));
+    const colors = new Set(
+      Array.from({ length: 200 }, (_, seed) => Color.random(createRandomInt(seed)).value),
+    );
 
     expect(colors.size).toBeGreaterThan(195);
   });
 
   it("seeds land in the 24-bit color space", () => {
     for (let seed = 0; seed < 500; seed++) {
-      const color = Color.random(seed);
+      const color = Color.random(createRandomInt(seed));
 
       expect(Number.isInteger(color.value)).toBe(true);
       expect(color.value).toBeGreaterThanOrEqual(0);

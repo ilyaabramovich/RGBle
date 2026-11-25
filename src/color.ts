@@ -1,6 +1,6 @@
 import type { RandomInt } from "./random";
 
-import { createRandomInt, defaultRandomInt } from "./random";
+import { defaultRandomInt } from "./random";
 
 export type Channel = 0 | 1 | 2;
 
@@ -33,9 +33,7 @@ export class Color {
     this.value = value;
   }
 
-  static random(source: number | RandomInt = defaultRandomInt): Color {
-    const randomInt = typeof source === "number" ? createRandomInt(source) : source;
-
+  static random(randomInt: RandomInt = defaultRandomInt): Color {
     return new Color(randomInt(COLOR_COUNT - 1));
   }
 
