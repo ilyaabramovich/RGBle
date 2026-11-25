@@ -8,7 +8,7 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "oxlint",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc",
     "check": "npm run fmt:check && npm run lint && npm run typecheck && npm test",
     "preview": "vite preview",
     "test": "vitest run",
