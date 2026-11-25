@@ -20,19 +20,11 @@ export class Game {
   readonly initialColor: Color;
   readonly targetColor: Color;
 
-  private initializeSeed(): number | undefined {
-    if (this.mode === "free") {
-      return;
-    }
-
-    return dailySeed(new Date());
-  }
-
   constructor(mode: GameMode, seed?: number) {
     this.mode = mode;
     // crypto.randomUUID would throw on plain-http LAN origins, which are not secure contexts.
     this.id = nextId++;
-    this.seed = seed ?? this.initializeSeed();
+    this.seed = seed ?? (mode === "daily" ? dailySeed() : undefined);
 
     const randomInt = createRandomInt(this.seed);
     const initialColor = Color.random(randomInt);
