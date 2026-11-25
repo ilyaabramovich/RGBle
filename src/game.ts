@@ -41,4 +41,8 @@ export class Game {
     this.initialColor = initialColor;
     this.targetColor = initialColor.offset(offsets);
   }
+
+  isStale(date = new Date()): boolean {
+    return this.mode === "daily" && this.seed !== dailySeed(date);
+  }
 }

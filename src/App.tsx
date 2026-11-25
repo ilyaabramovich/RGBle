@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import Header from "./components/Header";
 import Puzzle from "./components/Puzzle";
@@ -8,6 +8,18 @@ function App() {
   const [game, setGame] = useState<Game>(() => new Game("daily"));
 
   const handleModeChange = useCallback((mode: GameMode) => setGame(new Game(mode)), []);
+
+  useEffect(() => {
+    const rollOver = () => {
+      if (document.visibilityState === "visible") {
+        setGame((game) => (game.isStale() ? new Game("daily") : game));
+      }
+    };
+
+    document.addEventListener("visibilitychange", rollOver);
+
+    return () => document.removeEventListener("visibilitychange", rollOver);
+  }, []);
 
   return (
     <div className="flex min-h-dvh flex-col items-center gap-4 p-4">

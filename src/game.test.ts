@@ -102,3 +102,17 @@ describe("Game", () => {
     expect(ids.size).toBe(50);
   });
 });
+
+describe("Game.isStale", () => {
+  it("goes stale once the daily's local day has passed", () => {
+    const game = new Game("daily", dailySeed(new Date(2026, 7, 5)));
+
+    expect(game.isStale(new Date(2026, 7, 5, 0, 0))).toBe(false);
+    expect(game.isStale(new Date(2026, 7, 5, 23, 59, 59, 999))).toBe(false);
+    expect(game.isStale(new Date(2026, 7, 6, 0, 0))).toBe(true);
+  });
+
+  it("never goes stale in free play", () => {
+    expect(new Game("free").isStale(new Date(2099, 0, 1))).toBe(false);
+  });
+});

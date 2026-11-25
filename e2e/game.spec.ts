@@ -78,3 +78,15 @@ test("new game leaves the daily, and daily brings the same board back", async ({
   await expect(heading(page)).toHaveText(daily!);
   expect(await readColors(page)).toEqual(dailyColors);
 });
+
+test("a daily left open past midnight turns over when the tab comes back", async ({ page }) => {
+  await page.clock.install({ time: new Date(2026, 7, 5, 23, 50) });
+  await page.goto("/");
+  const yesterday = await readColors(page);
+
+  await page.clock.setSystemTime(new Date(2026, 7, 6, 9, 0));
+  await page.evaluate(() => document.dispatchEvent(new Event("visibilitychange")));
+
+  await expect.poll(() => readColors(page)).not.toEqual(yesterday);
+  await expect(heading(page)).toHaveText("Daily puzzle");
+});
