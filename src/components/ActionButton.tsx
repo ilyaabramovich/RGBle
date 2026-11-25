@@ -9,7 +9,7 @@ export default function ActionButton({ children, onClick, disabled }: ActionButt
   return (
     <button
       type="button"
-      className="inline-flex cursor-pointer items-center justify-center rounded-md border border-current px-4 py-2 font-semibold whitespace-nowrap focus-visible:outline-2 focus-visible:outline-offset-2 aria-disabled:cursor-default aria-disabled:opacity-40"
+      className="cursor-pointer rounded-md border px-4 py-2 font-semibold whitespace-nowrap focus-visible:outline-2 focus-visible:outline-offset-2 aria-disabled:cursor-default aria-disabled:opacity-40"
       onClick={disabled ? undefined : onClick}
       aria-disabled={disabled}
     >

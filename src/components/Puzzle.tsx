@@ -36,7 +36,7 @@ export default function Puzzle({ initialColor, targetColor }: PuzzleProps) {
   };
 
   return (
-    <div className="@container flex w-full max-w-md flex-col gap-4">
+    <div className="flex w-full flex-col gap-4">
       <GameBoard from={initialColor} to={targetColor} status={status}>
         {Array.from({ length: MAX_MOVES }, (_, idx) => (
           <Tile key={idx} color={moves[idx] ?? null} />
