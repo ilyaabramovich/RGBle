@@ -11,9 +11,11 @@ export const GAME_STATUS = {
   lost: "Not this time",
 } as const;
 
+let nextId = 0;
+
 export class Game {
   readonly mode: GameMode;
-  readonly id: string;
+  readonly id: number;
   readonly seed: number | undefined;
   readonly initialColor: Color;
   readonly targetColor: Color;
@@ -28,7 +30,8 @@ export class Game {
 
   constructor(mode: GameMode, seed?: number) {
     this.mode = mode;
-    this.id = crypto.randomUUID();
+    // crypto.randomUUID would throw on plain-http LAN origins, which are not secure contexts.
+    this.id = nextId++;
     this.seed = seed ?? this.initializeSeed();
 
     const randomInt = createRandomInt(this.seed);
