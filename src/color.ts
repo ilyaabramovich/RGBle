@@ -22,10 +22,6 @@ for (let i = 0; i <= MAX_CHANNEL; i++) {
   LINEAR_CHANNEL[i] = channel <= 0.03928 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4;
 }
 
-const HEX = Array.from({ length: MAX_CHANNEL + 1 }, (_, value) =>
-  value.toString(16).padStart(2, "0"),
-);
-
 function clampChannel(value: number) {
   return value < 0 ? 0 : value > MAX_CHANNEL ? MAX_CHANNEL : value;
 }
@@ -52,7 +48,7 @@ export class Color {
   }
 
   toString(): string {
-    return `#${HEX[this.red()]}${HEX[this.green()]}${HEX[this.blue()]}`;
+    return `#${this.value.toString(16).padStart(6, "0")}`;
   }
 
   equals(other: Color): boolean {
