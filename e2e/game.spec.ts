@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 
-import { MAX_MOVES } from "../src/config.js";
-import { GAME_STATUS } from "../src/game.js";
+import { MAX_MOVES } from "../src/config";
+import { GAME_STATUS } from "../src/game";
 import {
   button,
   controlPad,
@@ -12,7 +12,7 @@ import {
   playToWin,
   readColors,
   status,
-} from "./game-page.js";
+} from "./game-page";
 
 test.beforeEach(async ({ page }) => {
   await page.goto("/");

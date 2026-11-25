@@ -3,8 +3,8 @@ import type { Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 
-import { MAX_MOVES } from "../src/config.js";
-import { GAME_STATUS } from "../src/game.js";
+import { MAX_MOVES } from "../src/config";
+import { GAME_STATUS } from "../src/game";
 import {
   announcer,
   button,
@@ -13,7 +13,7 @@ import {
   playSomeMoves,
   playToLoss,
   status,
-} from "./game-page.js";
+} from "./game-page";
 
 const TAGS = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"];
 
