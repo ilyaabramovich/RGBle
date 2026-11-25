@@ -23,7 +23,6 @@ const ratio = (a: Color, b: Color) => {
 describe("Color", () => {
   it("keeps the packed value it was built from", () => {
     expect(new Color(0x0a141e).value).toBe(0x0a141e);
-    expect(+new Color(0x0a141e)).toBe(0x0a141e);
   });
 
   it("packs a channel triple back into a color", () => {

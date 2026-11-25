@@ -43,10 +43,6 @@ export class Color {
     return new Color((red << 16) | (green << 8) | blue);
   }
 
-  valueOf(): number {
-    return this.value;
-  }
-
   toString(): string {
     return `#${this.value.toString(16).padStart(6, "0")}`;
   }
