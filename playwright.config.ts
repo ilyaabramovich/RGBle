@@ -13,7 +13,10 @@ export default defineConfig({
     baseURL: `http://localhost:${PORT}`,
     trace: "on-first-retry",
   },
-  projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
+  projects: [
+    { name: "chromium", use: { ...devices["Desktop Chrome"] } },
+    { name: "webkit", use: { ...devices["Desktop Safari"] } },
+  ],
   webServer: {
     command: process.env.CI
       ? `npm run build && npm run preview -- --port ${PORT} --strictPort`
