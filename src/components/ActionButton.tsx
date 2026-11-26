@@ -4,7 +4,7 @@ type ActionButtonProps = React.PropsWithChildren<{
 }>;
 
 // aria-disabled rather than disabled: a natively disabled button drops keyboard focus
-// to <body> in WebKit when its own press disables it (Reset, the last Undo, Daily).
+// to <body> in WebKit when its own press disables it (Reset, the last Undo).
 export default function ActionButton({ children, onClick, disabled }: ActionButtonProps) {
   return (
     <button

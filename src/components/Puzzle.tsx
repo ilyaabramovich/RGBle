@@ -1,5 +1,3 @@
-import { useState } from "react";
-
 import type { Color } from "../color";
 
 import { MAX_MOVES } from "../config";
@@ -13,11 +11,18 @@ import Tile from "./Tile";
 type PuzzleProps = {
   initialColor: Color;
   targetColor: Color;
+  moves: Color[];
+  onMovesChange: (update: (moves: Color[]) => Color[]) => void;
+  onNewPuzzle?: (() => void) | undefined;
 };
 
-export default function Puzzle({ initialColor, targetColor }: PuzzleProps) {
-  const [moves, setMoves] = useState<Color[]>([]);
-
+export default function Puzzle({
+  initialColor,
+  targetColor,
+  moves,
+  onMovesChange: setMoves,
+  onNewPuzzle,
+}: PuzzleProps) {
   const currentColor = moves.at(-1) ?? initialColor;
   const isOver = moves.length >= MAX_MOVES;
   const hasWon = isOver && currentColor.equals(targetColor);
@@ -32,7 +37,7 @@ export default function Puzzle({ initialColor, targetColor }: PuzzleProps) {
   };
 
   const handleRestart = () => {
-    setMoves([]);
+    setMoves(() => []);
   };
 
   return (
@@ -46,7 +51,12 @@ export default function Puzzle({ initialColor, targetColor }: PuzzleProps) {
         {`Current color ${currentColor.describe()}. Target color ${targetColor.describe()}. ${MAX_MOVES - moves.length} moves left.`}
       </p>
       {import.meta.env.DEV && <DebugOverlay colors={[currentColor, targetColor]} />}
-      <GameToolbar moveCount={moves.length} onUndo={handleUndo} onRestart={handleRestart} />
+      <GameToolbar
+        moveCount={moves.length}
+        onUndo={handleUndo}
+        onRestart={handleRestart}
+        onNewPuzzle={onNewPuzzle}
+      />
       <ControlPad color={currentColor} isOver={isOver} onMove={handleMove} />
     </div>
   );
