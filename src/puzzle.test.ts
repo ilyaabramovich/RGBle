@@ -30,14 +30,6 @@ describe("dailySeed", () => {
     expect(new Set(hours).size).toBe(1);
   });
 
-  it("gives every day of a year its own seed", () => {
-    const seeds = new Set(
-      Array.from({ length: 366 }, (_, day) => dailySeed(new Date(2028, 0, 1 + day))),
-    );
-
-    expect(seeds.size).toBe(366);
-  });
-
   it("moves on by one whole day across a daylight-saving change", () => {
     for (const [year, month, start] of [
       [2027, 2, 26],

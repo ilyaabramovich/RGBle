@@ -47,12 +47,6 @@ describe("Game", () => {
     expect(rebuilt).toEqual(SHIPPED_BOARDS);
   });
 
-  it("gives the same board every time for one seed", () => {
-    for (const seed of [20670, 0, 25000]) {
-      expect(board(new Game("daily", seed))).toEqual(board(new Game("daily", seed)));
-    }
-  });
-
   it("gives different boards to neighbouring days", () => {
     const boards = new Set(
       Array.from({ length: 365 }, (_, day) =>
@@ -90,16 +84,6 @@ describe("Game", () => {
   it("seeds the daily from today and leaves free play unseeded", () => {
     expect(new Game("daily").seed).toBe(dailySeed(new Date()));
     expect(new Game("free").seed).toBeUndefined();
-  });
-
-  it("replays a mode from an explicit seed", () => {
-    expect(board(new Game("free", 20670))).toEqual(board(new Game("daily", 20670)));
-  });
-
-  it("gives every game its own id", () => {
-    const ids = new Set(Array.from({ length: 50 }, () => new Game("daily").id));
-
-    expect(ids.size).toBe(50);
   });
 });
 

@@ -11,11 +11,14 @@ type GameStatusOverlayProps = {
 
 function GameStatusOverlay({ from, to, status }: GameStatusOverlayProps) {
   const resultRef = useRef<HTMLParagraphElement>(null);
+  const prevStatus = useRef(status);
 
+  // Focus only when a move ends the game, not when switching back to a board that already ended.
   useEffect(() => {
-    if (status) {
+    if (status && !prevStatus.current) {
       resultRef.current?.focus();
     }
+    prevStatus.current = status;
   }, [status]);
 
   return (

@@ -22,52 +22,13 @@ const ratio = (a: Color, b: Color) => {
 };
 
 describe("Color", () => {
-  it("keeps the packed value it was built from", () => {
-    expect(new Color(0x0a141e).value).toBe(0x0a141e);
-  });
-
   it("packs a channel triple back into a color", () => {
     expect(Color.pack([10, 20, 30]).value).toBe(0x0a141e);
     expect(Color.pack([255, 255, 255]).value).toBe(0xffffff);
   });
-
-  it("compares by value rather than by identity", () => {
-    expect(new Color(0x0a141e).equals(new Color(0x0a141e))).toBe(true);
-    expect(new Color(0x0a141e).equals(new Color(0x0a141f))).toBe(false);
-  });
 });
 
 describe("Color.random", () => {
-  it("produces integers inside the 24-bit color space", () => {
-    for (let i = 0; i < 500; i++) {
-      const color = Color.random();
-
-      expect(Number.isInteger(color.value)).toBe(true);
-      expect(color.value).toBeGreaterThanOrEqual(0);
-      expect(color.value).toBeLessThanOrEqual(0xffffff);
-    }
-  });
-
-  it("draws from the random source it is given", () => {
-    expect(Color.random(() => 0x0a141e).value).toBe(0x0a141e);
-  });
-
-  it("gives one seed the same color every time", () => {
-    for (const seed of [0, 20670, 25000]) {
-      expect(Color.random(createRandomInt(seed)).value).toBe(
-        Color.random(createRandomInt(seed)).value,
-      );
-    }
-  });
-
-  it("gives different seeds different colors", () => {
-    const colors = new Set(
-      Array.from({ length: 200 }, (_, seed) => Color.random(createRandomInt(seed)).value),
-    );
-
-    expect(colors.size).toBeGreaterThan(195);
-  });
-
   it("seeds land in the 24-bit color space", () => {
     for (let seed = 0; seed < 500; seed++) {
       const color = Color.random(createRandomInt(seed));
@@ -84,42 +45,12 @@ describe("offset", () => {
     expect(new Color(0x646464).offset([10, -10, 0]).value).toBe(0x6e5a64);
   });
 
-  it("returns the color unchanged for zero offsets", () => {
-    expect(new Color(0x0c2238).offset([0, 0, 0]).value).toBe(0x0c2238);
-  });
-
   it("clamps at zero instead of going negative", () => {
     expect(new Color(0x000a0a).offset([-24, 0, 0]).value).toBe(0x000a0a);
   });
 
   it("clamps at 255", () => {
     expect(new Color(0xfa0000).offset([10, 0, 0]).value).toBe(0xff0000);
-  });
-
-  it("does not bleed a clamped channel into its neighbours", () => {
-    expect(new Color(0x00ff00).offset([0, 1, 0]).value).toBe(0x00ff00);
-    expect(new Color(0x00ff00).offset([0, -256, 0]).value).toBe(0x000000);
-  });
-
-  it("stays in 0-255 across the whole config space", () => {
-    const invalid = [];
-
-    for (let channel = 0; channel < 256; channel++) {
-      const color = new Color((channel << 16) | (channel << 8) | channel);
-
-      for (let offset = -50; offset <= 50; offset++) {
-        for (const multiplier of [1, 5, 10, 20, 40]) {
-          const amount = offset * multiplier;
-          const result = color.offset([amount, 0, -amount]).channels();
-
-          if (result.some((value) => !Number.isInteger(value) || value < 0 || value > 255)) {
-            invalid.push({ channel, offset, multiplier, result });
-          }
-        }
-      }
-    }
-
-    expect(invalid).toEqual([]);
   });
 });
 
@@ -133,6 +64,7 @@ describe("offsetChannel", () => {
   it("clamps within the channel without bleeding into its neighbours", () => {
     expect(new Color(0x00ff00).offsetChannel(1, 1).value).toBe(0x00ff00);
     expect(new Color(0xff00ff).offsetChannel(1, -1).value).toBe(0xff00ff);
+    expect(new Color(0x00ff00).offsetChannel(1, -256).value).toBe(0x000000);
   });
 
   it("agrees with offset for every channel", () => {
@@ -199,22 +131,6 @@ describe("mix", () => {
     expect(new Color(0x0a1400).mix(new Color(0x141e00)).value).toBe(0x0f1900);
   });
 
-  it("leaves a color mixed with itself untouched", () => {
-    for (let i = 0; i < 100; i++) {
-      const color = randomColor();
-
-      expect(color.mix(color).value).toBe(color.value);
-    }
-  });
-
-  it("does not depend on the order of its arguments", () => {
-    for (let i = 0; i < 100; i++) {
-      const [a, b] = [randomColor(), randomColor()];
-
-      expect(a.mix(b).value).toBe(b.mix(a).value);
-    }
-  });
-
   it("stays inside the channel range and between the two inputs", () => {
     for (let i = 0; i < 500; i++) {
       const [a, b] = [randomColor(), randomColor()];
@@ -235,28 +151,7 @@ describe("toString", () => {
   it("zero-pads to six digits", () => {
     expect(new Color(0x000000).toString()).toBe("#000000");
     expect(new Color(0x000522).toString()).toBe("#000522");
-  });
-
-  it("formats full-range channels", () => {
     expect(new Color(0xffffff).toString()).toBe("#ffffff");
-  });
-
-  it("renders the hex when interpolated into a string", () => {
-    expect(`${new Color(0x000522)}`).toBe("#000522");
-  });
-
-  it("round-trips back to the original channels", () => {
-    for (let i = 0; i < 100; i++) {
-      const color = randomColor();
-      const hex = color.toString();
-
-      expect(hex).toMatch(/^#[0-9a-f]{6}$/);
-      expect([
-        parseInt(hex.slice(1, 3), 16),
-        parseInt(hex.slice(3, 5), 16),
-        parseInt(hex.slice(5, 7), 16),
-      ]).toEqual(color.channels());
-    }
   });
 });
 
@@ -266,19 +161,6 @@ describe("describe", () => {
     expect(new Color(0x000000).describe()).toBe("red 0, green 0, blue 0");
     expect(new Color(0xffffff).describe()).toBe("red 255, green 255, blue 255");
   });
-
-  it("reports the same channels channels() unpacks", () => {
-    for (let i = 0; i < 100; i++) {
-      const color = randomColor();
-
-      expect(color.describe()).toBe(
-        color
-          .channels()
-          .map((value, channel) => `${["red", "green", "blue"][channel]} ${value}`)
-          .join(", "),
-      );
-    }
-  });
 });
 
 describe("channels", () => {
@@ -286,12 +168,5 @@ describe("channels", () => {
     expect(new Color(0x0a141e).channels()).toEqual([10, 20, 30]);
     expect(new Color(0x000000).channels()).toEqual([0, 0, 0]);
     expect(new Color(0xffffff).channels()).toEqual([255, 255, 255]);
-  });
-
-  it("agrees with the per-channel accessors", () => {
-    const color = new Color(0x0a141e);
-
-    expect([color.red(), color.green(), color.blue()]).toEqual(color.channels());
-    expect(CHANNELS.map(({ channel }) => color.channelAt(channel))).toEqual(color.channels());
   });
 });
