@@ -1,9 +1,9 @@
 import type { Page } from "@playwright/test";
 
-import type { Channel } from "../src/color.js";
+import type { Channel } from "../src/color";
 
-import { CHANNELS, Color } from "../src/color.js";
-import { STEP, MAX_MOVES } from "../src/config.js";
+import { CHANNELS, Color } from "../src/color";
+import { STEP, MAX_MOVES } from "../src/config";
 
 export type Move = {
   channel: Channel;

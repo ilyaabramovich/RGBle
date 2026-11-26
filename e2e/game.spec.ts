@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 
-import { MAX_MOVES } from "../src/config.js";
-import { GAME_STATUS } from "../src/game.js";
+import { MAX_MOVES } from "../src/config";
+import { GAME_STATUS } from "../src/game";
 import {
   button,
   controlPad,
@@ -12,7 +12,7 @@ import {
   playToWin,
   readColors,
   status,
-} from "./game-page.js";
+} from "./game-page";
 
 test.beforeEach(async ({ page }) => {
   await page.goto("/");
@@ -77,4 +77,16 @@ test("new game leaves the daily, and daily brings the same board back", async ({
   await button(page, "Daily").click();
   await expect(heading(page)).toHaveText(daily!);
   expect(await readColors(page)).toEqual(dailyColors);
+});
+
+test("a daily left open past midnight turns over when the tab comes back", async ({ page }) => {
+  await page.clock.install({ time: new Date(2026, 7, 5, 23, 50) });
+  await page.goto("/");
+  const yesterday = await readColors(page);
+
+  await page.clock.setSystemTime(new Date(2026, 7, 6, 9, 0));
+  await page.evaluate(() => document.dispatchEvent(new Event("visibilitychange")));
+
+  await expect.poll(() => readColors(page)).not.toEqual(yesterday);
+  await expect(heading(page)).toHaveText("Daily puzzle");
 });

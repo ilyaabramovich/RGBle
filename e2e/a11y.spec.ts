@@ -3,8 +3,8 @@ import type { Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 
-import { MAX_MOVES } from "../src/config.js";
-import { GAME_STATUS } from "../src/game.js";
+import { MAX_MOVES } from "../src/config";
+import { GAME_STATUS } from "../src/game";
 import {
   announcer,
   button,
@@ -13,7 +13,7 @@ import {
   playSomeMoves,
   playToLoss,
   status,
-} from "./game-page.js";
+} from "./game-page";
 
 const TAGS = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"];
 
@@ -89,7 +89,7 @@ test("the board reports its colors and remaining moves to a screen reader", asyn
 test("the controls are reached and fired from the keyboard", async ({ page }) => {
   const focused: (string | null)[] = [];
 
-  for (let i = 0; i < 4; i++) {
+  for (let i = 0; i < 7; i++) {
     await page.keyboard.press("Tab");
     focused.push(
       await page.evaluate(
@@ -101,8 +101,31 @@ test("the controls are reached and fired from the keyboard", async ({ page }) =>
     );
   }
 
-  expect(focused).toEqual(["Free play", "Increase red", "Increase green", "Increase blue"]);
+  expect(focused).toEqual([
+    "Daily",
+    "Free play",
+    "Undo",
+    "Reset",
+    "Increase red",
+    "Increase green",
+    "Increase blue",
+  ]);
 
   await page.keyboard.press("Enter");
   await expect(moveCounter(page)).toHaveText(`Moves: 1/${MAX_MOVES}`);
+});
+
+test("focus stays on a toolbar button that its own press disables", async ({ page }) => {
+  await playSomeMoves(page, 2);
+
+  const reset = button(page, "Reset");
+  await reset.focus();
+  await page.keyboard.press("Enter");
+
+  await expect(moveCounter(page)).toHaveText(`Moves: 0/${MAX_MOVES}`);
+  await expect(reset).toBeFocused();
+  await expect(reset).toBeDisabled();
+
+  await page.keyboard.press("Enter");
+  await expect(moveCounter(page)).toHaveText(`Moves: 0/${MAX_MOVES}`);
 });

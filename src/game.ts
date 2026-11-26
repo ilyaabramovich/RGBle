@@ -11,25 +11,20 @@ export const GAME_STATUS = {
   lost: "Not this time",
 } as const;
 
+let nextId = 0;
+
 export class Game {
   readonly mode: GameMode;
-  readonly id: string;
+  readonly id: number;
   readonly seed: number | undefined;
   readonly initialColor: Color;
   readonly targetColor: Color;
 
-  private initializeSeed(): number | undefined {
-    if (this.mode === "free") {
-      return;
-    }
-
-    return dailySeed(new Date());
-  }
-
   constructor(mode: GameMode, seed?: number) {
     this.mode = mode;
-    this.id = crypto.randomUUID();
-    this.seed = seed ?? this.initializeSeed();
+    // crypto.randomUUID would throw on plain-http LAN origins, which are not secure contexts.
+    this.id = nextId++;
+    this.seed = seed ?? (mode === "daily" ? dailySeed() : undefined);
 
     const randomInt = createRandomInt(this.seed);
     const initialColor = Color.random(randomInt);
@@ -37,5 +32,9 @@ export class Game {
 
     this.initialColor = initialColor;
     this.targetColor = initialColor.offset(offsets);
+  }
+
+  isStale(date = new Date()): boolean {
+    return this.mode === "daily" && this.seed !== dailySeed(date);
   }
 }
