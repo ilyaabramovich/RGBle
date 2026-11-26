@@ -50,14 +50,14 @@ test("a finished board has no accessibility violations", async ({ page }) => {
 
 test("free play has no accessibility violations", async ({ page }) => {
   await button(page, "Free play").click();
-  await expect(heading(page)).toHaveText("Free play");
+  await expect(button(page, "Free play")).toHaveAttribute("aria-pressed", "true");
 
   await expectNoViolations(page);
 });
 
 test("the page names itself once, at the top", async ({ page }) => {
   await expect(heading(page)).toHaveCount(1);
-  await expect(heading(page)).toHaveText("Daily puzzle");
+  await expect(heading(page)).toHaveText("RGBle");
 });
 
 test("every control names the channel it moves", async ({ page }) => {

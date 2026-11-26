@@ -5,7 +5,6 @@ import { GAME_STATUS } from "../src/game";
 import {
   button,
   controlPad,
-  heading,
   moveCounter,
   playSomeMoves,
   playToLoss,
@@ -69,17 +68,15 @@ test("free play leaves the daily, and daily brings back the same board and moves
 }) => {
   const dailyColors = await readColors(page);
 
-  await expect(heading(page)).toHaveText("Daily puzzle");
   await expect(button(page, "Daily")).toHaveAttribute("aria-pressed", "true");
   await playSomeMoves(page, 3);
 
   await button(page, "Free play").click();
-  await expect(heading(page)).toHaveText("Free play");
   await expect(button(page, "Free play")).toHaveAttribute("aria-pressed", "true");
   await expect(moveCounter(page)).toHaveText(`Moves: 0/${MAX_MOVES}`);
 
   await button(page, "Daily").click();
-  await expect(heading(page)).toHaveText("Daily puzzle");
+  await expect(button(page, "Daily")).toHaveAttribute("aria-pressed", "true");
   await expect(moveCounter(page)).toHaveText(`Moves: 3/${MAX_MOVES}`);
   expect((await readColors(page)).target).toEqual(dailyColors.target);
 });
@@ -109,5 +106,5 @@ test("a daily left open past midnight turns over when the tab comes back", async
   await page.evaluate(() => document.dispatchEvent(new Event("visibilitychange")));
 
   await expect.poll(() => readColors(page)).not.toEqual(yesterday);
-  await expect(heading(page)).toHaveText("Daily puzzle");
+  await expect(button(page, "Daily")).toHaveAttribute("aria-pressed", "true");
 });

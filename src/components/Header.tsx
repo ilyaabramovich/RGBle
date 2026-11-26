@@ -13,7 +13,7 @@ const MODES: [GameMode, string][] = [
 export default function Header({ gameMode, onModeChange }: HeaderProps) {
   return (
     <header className="flex w-full items-center justify-between gap-4">
-      <h1 className="text-xl font-bold">{gameMode === "daily" ? "Daily puzzle" : "Free play"}</h1>
+      <h1 className="text-xl font-bold">RGBle</h1>
       <fieldset aria-label="Game mode" className="flex rounded-md border">
         {MODES.map(([mode, label]) => (
           <button
