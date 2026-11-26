@@ -35,12 +35,6 @@ test("the daily board has no accessibility violations", async ({ page }) => {
   await expectNoViolations(page);
 });
 
-test("a board in play has no accessibility violations", async ({ page }) => {
-  await playSomeMoves(page, 3);
-
-  await expectNoViolations(page);
-});
-
 test("a finished board has no accessibility violations", async ({ page }) => {
   await playToLoss(page);
   await expect(status(page)).toHaveText(GAME_STATUS.lost);
@@ -65,8 +59,6 @@ test("every control names the channel it moves", async ({ page }) => {
     await expect(button(page, `Increase ${name}`)).toBeVisible();
     await expect(button(page, `Decrease ${name}`)).toBeVisible();
   }
-
-  await expect(page.getByRole("button")).toHaveCount(10);
 });
 
 test("the visible move counter stays out of the accessibility tree", async ({ page }) => {

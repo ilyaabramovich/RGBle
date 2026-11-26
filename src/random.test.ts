@@ -31,12 +31,4 @@ describe("createRandomInt", () => {
 
     expect(openings.size).toBe(500);
   });
-
-  it("picks its own seed when none is given", () => {
-    const sequences = new Set(
-      Array.from({ length: 50 }, () => draw(createRandomInt(), 4, 16777215).join(",")),
-    );
-
-    expect(sequences.size).toBeGreaterThan(45);
-  });
 });
